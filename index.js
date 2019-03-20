@@ -13,21 +13,19 @@ app.get('/trad/:words', function(req, res) {
    res.send('get the correct route');
 
     async function run(keyword, fromLanguage, toLanguage) {
-        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: true});
+        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: false});
         const page = await browser.newPage();
 
         const paramsUrl = keyword.replace(/\s+/g, '%20');
-        console.log(paramsUrl);
 
-        const base = 'https://www.deepl.com/translator#';
-        const url = base.concat(fromLanguage,'/',toLanguage,'/',paramsUrl);
+        const base = 'https://translate.google.fr/#view=home&op=translate&sl=';
+        const url = base.concat(fromLanguage,'&tl=',toLanguage,'&text=',paramsUrl);
 
         await page.goto(url);
 
-        await page.waitFor(1500);
+        await page.waitFor(5000);
 
-        const resultTrad = await page.$eval('.lmt__target_textarea', el => el.value);
-        console.log(resultTrad);
+        const resultTrad = await page.$eval('.tlid-translation > span:nth-child(1)', el => el.innerHTML);
 
         const obj = {
             lang: toLanguage,
@@ -35,6 +33,8 @@ app.get('/trad/:words', function(req, res) {
         };
 
         const json = JSON.stringify(obj);
+
+        console.log(json);
 
         fs.writeFile(
             './json/result-'+toLanguage+'.json',
@@ -52,6 +52,7 @@ app.get('/trad/:words', function(req, res) {
     run(words, 'fr', 'it');
     run(words, 'fr', 'nl');
     run(words, 'fr', 'pt');
+    run(words, 'fr', 'tr');
 
 
 });
