@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
 
 var app = express();
 
@@ -33,6 +34,11 @@ app.get('/trad/:fromLanguage/:toLanguage/:words', function(req, res) {
 
         await page.screenshot({ path: 'screenshots/github.png' });
 
+        fs.writeFile(
+            './json/test.json',
+            JSON.stringify(resultTrad, null, 2),
+            (err) => err ? console.error('Data not written!', err) : console.log('Data written')
+        );
 
         browser.close();
     }
