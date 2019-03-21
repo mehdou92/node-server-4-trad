@@ -18,8 +18,7 @@ var app = express();
 
 app.use(cors());
 
-app.get('/requestAll/:keyword/:date', function(req, res)
-{
+app.get('/requestAll/:keyword/:date', function (req, res) {
     const keyword = req.params.keyword;
     const date = req.params.date;
 
@@ -35,47 +34,87 @@ app.get('/requestAll/:keyword/:date', function(req, res)
     const editionTr = 'tr-tr';
     const editionBr = 'pt-br';
 
-    const urlFr = 'https://api.ozae.com/gnw/articles?date='+date+'&key='+key+'&edition='+editionFr+'&query='+keyword+'&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
-    const urlUsNy = 'https://api.ozae.com/gnw/articles?date='+date+'&key='+key+'&edition='+editionUsNy+'&query='+keyword+'&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlFr = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionFr + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlFrBe = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionFrBe + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlNlbe = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionNlBe + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlUsNy = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionUsNy + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlUsSf = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionUsSf + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlUk = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionUk + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlIt = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionIt + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlGe = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionGe + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlSp = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionSp + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlTr = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionTr + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlBr = 'https://api.ozae.com/gnw/articles?date=' + date + '&key=' + key + '&edition=' + editionBr + '&query=' + keyword + '&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
 
-    console.log(url);
+    function getEditionFr() {
+        return axios.get(urlFr);
+    }
 
-    axios.get(urlFr)
+    function getEditionFrBe() {
+        return axios.get(urlFrBe);
+    }
+
+    function getEditionNlBe() {
+        return axios.get(urlNlbe);
+    }
+
+    function getEditionUsNy() {
+        return axios.get(urlUsNy)
+    }
+    function getEditionUsSf() {
+        return axios.get(urlUsSf)
+    }
+    function getEditionUk(){
+        return axios.get(urlUk);
+    }
+    function getEditionIt(){
+        return axios.get(urlIt);
+    }
+    function getEditionGe(){
+        return axios.get(urlGe);
+    }
+    function getEditionSp(){
+        return axios.get(urlSp);
+    }
+    function getEditionTr(){
+        return axios.get(urlTr);
+    }
+    function getEditionBr(){
+        return axios.get(urlBr);
+    }
+
+    function customDataRequestAll(dataArticle) {
+        if (dataArticle.data.articles[0]) {
+            const objData = {
+                id: dataArticle.data.articles[0].id,
+                title: dataArticle.data.articles[0].name,
+                date_first_seen: dataArticle.data.articles[0].date_first_seen,
+                audience: dataArticle.data.articles[0].show_interval,
+                country: dataArticle.data.articles[0].edition
+            };
+            return objData;
+        }
+    }
+
+    axios.all([getEditionFr(), getEditionFrBe(), getEditionNlBe(), getEditionUsNy(), getEditionUsSf(), getEditionUk(), getEditionIt(), getEditionGe(), getEditionSp(), getEditionTr(), getEditionBr()])
         .then(function (response) {
-            res.send(response.data.articles);
-            // handle success
-            console.log('REPONSE SERVER');
-            console.log(response.data.articles);
+            let tab = [];
+            for(let i = 0; i < response.length; i+=1) {
+                tab.push(customDataRequestAll(response[i]));
+            }
+            res.send(tab);
         })
         .catch(function (error) {
-            // handle error
             console.log(error);
         })
-        .then(function () {
-            // always executed
-        });
 
-    /*axios.get(urlUsNy)
-        .then(function (response) {
-            res.send(response.data.articles);
-            // handle success
-            console.log('REPONSE SERVER');
-            console.log(response.data.articles);
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });*/
 });
 
 
-app.get('/trad/:words', function(req, res) {
-   const words = req.params.words;
+app.get('/trad/:words', function (req, res) {
+    const words = req.params.words;
 
-   res.send('get the correct route');
+    res.send('get the correct route');
 
     async function run(keyword, fromLanguage, toLanguage) {
         const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: false});
@@ -84,7 +123,7 @@ app.get('/trad/:words', function(req, res) {
         const paramsUrl = keyword.replace(/\s+/g, '%20');
 
         const base = 'https://translate.google.fr/#view=home&op=translate&sl=';
-        const url = base.concat(fromLanguage,'&tl=',toLanguage,'&text=',paramsUrl);
+        const url = base.concat(fromLanguage, '&tl=', toLanguage, '&text=', paramsUrl);
 
         await page.goto(url);
 
@@ -102,7 +141,7 @@ app.get('/trad/:words', function(req, res) {
         console.log(json);
 
         fs.writeFile(
-            './json/result-'+toLanguage+'.json',
+            './json/result-' + toLanguage + '.json',
             json,
             'utf-8',
             (err) => err ? console.error('Data not written!', err) : console.log('Data written')
