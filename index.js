@@ -23,13 +23,24 @@ app.get('/requestAll/:keyword/:date', function(req, res)
     const keyword = req.params.keyword;
     const date = req.params.date;
 
-    const edition = 'fr-fr';
+    const editionFr = 'fr-fr';
+    const editionFrBe = 'fr-be';
+    const editionNlBe = 'nl-be';
+    const editionUsNy = 'en-us-ny';
+    const editionUsSf = 'en-us-sf';
+    const editionUk = 'en-gb';
+    const editionIt = 'it-it';
+    const editionGe = 'ge-ge';
+    const editionSp = 'es-es';
+    const editionTr = 'tr-tr';
+    const editionBr = 'pt-br';
 
-    const url = 'https://api.ozae.com/gnw/articles?date='+date+'&key='+key+'&edition='+edition+'&query='+keyword+'&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlFr = 'https://api.ozae.com/gnw/articles?date='+date+'&key='+key+'&edition='+editionFr+'&query='+keyword+'&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
+    const urlUsNy = 'https://api.ozae.com/gnw/articles?date='+date+'&key='+key+'&edition='+editionUsNy+'&query='+keyword+'&hard_limit=0&order%5Bcol%5D=article_score&order%5Bsrt%5D=DESC';
 
     console.log(url);
 
-    axios.get(url)
+    axios.get(urlFr)
         .then(function (response) {
             res.send(response.data.articles);
             // handle success
@@ -43,6 +54,21 @@ app.get('/requestAll/:keyword/:date', function(req, res)
         .then(function () {
             // always executed
         });
+
+    /*axios.get(urlUsNy)
+        .then(function (response) {
+            res.send(response.data.articles);
+            // handle success
+            console.log('REPONSE SERVER');
+            console.log(response.data.articles);
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .then(function () {
+            // always executed
+        });*/
 });
 
 
